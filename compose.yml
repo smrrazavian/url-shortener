@@ -1,0 +1,18 @@
+services:
+  app:
+    container_name: url-shortener
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - SERVER_PORT=3000
+      - JWT_SECRET=${JWT_SECRET:-changeme-in-production}
+      - HMAC_SECRET=${HMAC_SECRET:-changeme-in-production}
+    env_file: .env
+    restart: unless-stopped
+    health:
+      test: [ "CMD", "wget", "--spider", "-q", "http://localhost:3000/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
