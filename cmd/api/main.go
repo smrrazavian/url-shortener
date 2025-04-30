@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/smrrazavian/url-shortener/pkg/idgen"
+)
 
 func main() {
-	fmt.Println("Hello, world!")
+	id, _ := idgen.GenerateID()
+	fmt.Println(id)
 }
