@@ -8,7 +8,18 @@ import (
 
 // Custom type to handle URL parsing
 type CustomURL struct {
-	*url.URL
+	raw *url.URL
+}
+
+func (u CustomURL) String() string {
+	if u.raw == nil {
+		return ""
+	}
+	return u.raw.String()
+}
+
+func (u CustomURL) IsNil() bool {
+	return u.raw == nil
 }
 
 // UnmarshalJSON to parse and validate the URL
@@ -23,12 +34,12 @@ func (u *CustomURL) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	u.URL = parsedURL
+	u.raw = parsedURL
 	return nil
 }
 
-func (u *CustomURL) MarshalJSON() ([]byte, error) {
-	return json.Marshal(u.URL.String())
+func (u CustomURL) MarshalJSON() ([]byte, error) {
+	return json.Marshal(u.raw.String())
 }
 
 // Main URL struct to represent the object in storage

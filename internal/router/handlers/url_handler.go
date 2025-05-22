@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"os"
 	"sync"
 	"time"
 
@@ -73,10 +74,40 @@ func GetURLHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if urlData.URL.URL == nil {
+	if urlData.URL.IsNil() {
 		http.Error(w, "Invalid Stored URL", http.StatusInternalServerError)
 		return
 	}
 
 	http.Redirect(w, r, urlData.URL.String(), http.StatusMovedPermanently)
+}
+
+func StoreToFile(filename string) error {
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	return json.NewEncoder(file).Encode(urlStore)
+}
+
+func LoadFromFile(filename string) error {
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	// https://stackoverflow.com/questions/1821811/how-to-read-write-from-to-a-file-using-go
+	file, err := os.Open(filename)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
+	defer file.Close()
+
+	return json.NewDecoder(file).Decode(&urlStore)
 }
