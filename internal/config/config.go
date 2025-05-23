@@ -10,6 +10,7 @@ import (
 // Config holds the application configuration parameters.
 type Config struct {
 	ServerPort int
+	HmacSecret []byte
 }
 
 // Load returns the application configuration.
@@ -19,7 +20,10 @@ func Load() (*Config, error) {
 		port = 3000
 	}
 
+	hmacSecret := []byte(os.Getenv("HMAC_SECRET"))
+
 	return &Config{
 		ServerPort: port,
+		HmacSecret: hmacSecret,
 	}, nil
 }

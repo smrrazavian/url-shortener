@@ -2,8 +2,6 @@ FROM golang:1.24-alpine AS builder
 
 WORKDIR /app
 
-FROM alpine:latest
-
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /go/bin/api ./cmd/api
 
 FROM alpine:latest
